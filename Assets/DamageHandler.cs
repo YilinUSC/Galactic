@@ -5,8 +5,6 @@ using UnityEngine;
 public class DamageHandler : MonoBehaviour
 {
     public int health = 1;
-    public float invulnerablePeriod = 0;
-    float invulnerableTimer = 0;
     private int correctLayer;
 
     void Start()
@@ -14,25 +12,43 @@ public class DamageHandler : MonoBehaviour
         correctLayer = gameObject.layer;
     }
 
-    void OnTriggerEnter2D()
+    void OnTriggerEnter2D(Collider2D col)
     {
-        Debug.Log("Trigger!");
-        
-        health--;
-        invulnerableTimer = invulnerablePeriod;   //which means the play will be invulnerable in invulnerablePeriod of seconds
-        gameObject.layer = 10;
-        
+        if (col.gameObject.tag == "Bullet")
+        {
+            if (gameObject.tag == "Enemy")
+            {
+                EnemyNumber enemyNumber = gameObject.GetComponent<EnemyNumber>();
+                EquationManager equationManager = FindObjectOfType<EquationManager>();
+
+                if (enemyNumber && equationManager && equationManager.CheckAnswer(enemyNumber.number))
+                {
+                    // Correct enemy was hit, destroy the enemy.
+                    Destroy(gameObject);
+                }
+                else
+                {
+                    // Wrong enemy was hit, damage the player.
+                    GameObject player = GameObject.FindGameObjectWithTag("Player");
+                    if (player)
+                    {
+                        DamageHandler playerDamageHandler = player.GetComponent<DamageHandler>();
+                        if (playerDamageHandler)
+                        {
+                            playerDamageHandler.TakeDamage();
+                        }
+                    }
+                }
+
+                // Destroy the bullet after it hits something.
+                Destroy(col.gameObject);
+            }
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    public void TakeDamage()
     {
-        invulnerableTimer -= Time.deltaTime;
-        if (invulnerableTimer <= 0)
-        {
-            gameObject.layer = correctLayer;
-        }
-
+        health--;
 
         if (health <= 0)
         {
