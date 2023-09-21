@@ -9,6 +9,12 @@ public class DamageHandler : MonoBehaviour
     public GameObject gameOverUI;  // Drag your game over UI panel here in the inspector
     private int correctLayer;
     
+    
+    public TextMeshProUGUI scoreText;  // Drag your score TextMeshProUGUI component here in the inspector
+    int score = 0;  // Player's score
+    
+    public static DamageHandler playerInstance;
+    
 
     void Start()
     {
@@ -19,6 +25,8 @@ public class DamageHandler : MonoBehaviour
         {
             gameOverUI.SetActive(false);
         }
+        
+        UpdateScoreText();  // Initialize score text at the start
     }
     
     void OnTriggerEnter2D(Collider2D col)
@@ -34,6 +42,14 @@ public class DamageHandler : MonoBehaviour
                 {
                     // Correct enemy was hit, destroy the enemy
                     Destroy(gameObject);
+                    
+                    // Increment the score and update the display
+                    //score++;
+                    //Debug.Log("Score incremented to: " + score);  //debug line
+                    //UpdateScoreText();
+                    
+                    DamageHandler.playerInstance.IncrementScore();
+
                     
                     // Generate a new equation because the player answered correctly
                     equationManager.GenerateEquation();
@@ -84,5 +100,35 @@ public class DamageHandler : MonoBehaviour
             gameOverUI.SetActive(true);  // Show the Game Over UI
         }
         Time.timeScale = 0;  // Pause the game
+    }
+    
+    void UpdateScoreText()
+    {
+        if (scoreText)
+        {
+            scoreText.text = "Score: " + score;
+        }
+    }
+    
+    void Awake()
+    {
+        if (gameObject.tag == "Player")
+        {
+            if (playerInstance == null)
+            {
+                playerInstance = this;
+            }
+            else
+            {
+                Destroy(gameObject);
+            }
+        }
+    }
+    
+    public void IncrementScore()
+    {
+        score++;
+        Debug.Log("Score incremented to: " + score);  //debug line
+        UpdateScoreText();
     }
 }

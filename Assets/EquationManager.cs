@@ -11,8 +11,10 @@ public class EquationManager : MonoBehaviour
 
     public void GenerateEquation()
     {
-        int num1 = Random.Range(0, 5);
-        int num2 = Random.Range(0, 5);
+        //int num1 = Random.Range(0, 5);
+        //int num2 = Random.Range(0, 5);
+        int num1 = 2;
+        int num2 = 2;
         answer = num1 + num2; // for addition
         equationText.text = num1 + " + " + num2 + " = ?";
     }
