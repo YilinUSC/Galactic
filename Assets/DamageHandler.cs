@@ -34,6 +34,9 @@ public class DamageHandler : MonoBehaviour
                 {
                     // Correct enemy was hit, destroy the enemy
                     Destroy(gameObject);
+                    
+                    // Generate a new equation because the player answered correctly
+                    equationManager.GenerateEquation();
                 }
                 else
                 {
